@@ -1,0 +1,7 @@
+.idea/*
+doc/*
+target/
+dependency-reduced-pom.xml
+dot-demo.jar
+workspace.xml
+graph-support.iml
