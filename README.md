@@ -32,7 +32,7 @@ mvn clean package
 Run:
 
 ```shell
-java -jar dot.jar
+java -jar dot-demo.jar
 ```
 
 You will see a simple dot editor client:
