@@ -19,7 +19,7 @@ digraph {
 	p2 -> frame[tailcell="6" headcell="6"]
 	p2 -> frame[tailcell="7" headcell="7"]
 	p3 -> frame[tailcell="0" headcell="0"]
-	p3 -> frame[tailcell="1" headcell="7"]
+	p3 -> frame[tailcell="1" headcell="1"]
 	p3 -> frame[tailcell="8" headcell="8"]
 	p3 -> frame[tailcell="9" headcell="9"]
 	p3 -> frame[tailcell="10" headcell="10"]
