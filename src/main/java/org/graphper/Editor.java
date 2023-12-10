@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -35,7 +34,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
-import org.graphper.draw.GraphResource;
+import org.graphper.api.GraphResource;
 
 public class Editor extends JFrame implements ActionListener, DocumentListener {
 
@@ -351,9 +350,8 @@ public class Editor extends JFrame implements ActionListener, DocumentListener {
           }
           try {
             GraphResource graphResource = new DotParser(textPane.getText()).getGraphResource();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            DocumentUtils.svgDocToImg(graphResource.inputStream(), os);
-            ImageIcon imageIcon = new ImageIcon(os.toByteArray(), "graphviz");
+            ImageIcon imageIcon = new ImageIcon(graphResource.bytes(), "graphviz");
+            graphResource.close();
 
             if (label != null) {
               view.remove(label);

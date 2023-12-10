@@ -26,9 +26,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache_gs.commons.lang3.StringUtils;
 import org.graphper.api.Cluster;
 import org.graphper.api.Cluster.ClusterBuilder;
+import org.graphper.api.FileType;
 import org.graphper.api.FloatLabel;
 import org.graphper.api.GraphContainer;
 import org.graphper.api.GraphContainer.GraphContainerBuilder;
+import org.graphper.api.GraphResource;
 import org.graphper.api.Graphviz;
 import org.graphper.api.Graphviz.GraphvizBuilder;
 import org.graphper.api.Html;
@@ -55,7 +57,6 @@ import org.graphper.api.attributes.Rankdir;
 import org.graphper.api.attributes.Splines;
 import org.graphper.api.attributes.Tend;
 import org.graphper.draw.ExecuteException;
-import org.graphper.draw.GraphResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -135,7 +136,7 @@ public class DotParser {
       setSubgraph(nodeRecord, graphvizBuilder, g);
     }
 
-    return graphvizBuilder.build().toSvg();
+    return graphvizBuilder.build().toFile(FileType.PNG);
   }
 
   private StringBuffer preHandle(String dot) {
@@ -287,6 +288,10 @@ public class DotParser {
             if (color != null) {
               setColor(color::getNodeValue, htmlTd::fontColor);
             }
+            org.w3c.dom.Node fontname = attributes.getNamedItem("fontname");
+            if (fontname != null) {
+              htmlTd.fontName(fontname.getNodeValue());
+            }
             org.w3c.dom.Node shape = attributes.getNamedItem("shape");
             if (shape != null) {
               NodeShapeEnum s = null;
@@ -432,6 +437,7 @@ public class DotParser {
 
     setColor(() ->  attrFunc.apply("color"), builder::color);
     setColor(() ->  attrFunc.apply("fontcolor"), builder::fontColor);
+    builder.fontName(attrFunc.apply("fontname"));
 
     String dir = attrFunc.apply("dir");
     if (dir != null) {
@@ -604,6 +610,7 @@ public class DotParser {
     setColor(() ->  node.getAttribute("color"), builder::color);
     setColor(() ->  node.getAttribute("fillcolor"), builder::fillColor);
     setColor(() ->  node.getAttribute("fontcolor"), builder::fontColor);
+    builder.fontName(node.getAttribute("fontname"));
 
     String style = node.getAttribute("style");
     if (style != null) {
