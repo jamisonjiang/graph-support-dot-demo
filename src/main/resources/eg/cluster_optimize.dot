@@ -1,0 +1,22 @@
+digraph G {
+    templine[dir=back]
+    C->BB
+    subgraph cluster_A {
+        label="Cluster A"
+        A->C
+        B->C
+    }
+    subgraph cluster_B {
+        label="Cluster B"
+        AA->CC
+        BB->CC
+    }
+    subgraph cluster_C {
+        label="Cluster C"
+        SS->TT
+        GG->PP
+        d->f
+        L->FF
+        FF->SS
+    }
+}
