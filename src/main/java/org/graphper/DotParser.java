@@ -43,6 +43,8 @@ import org.graphper.api.Node.NodeBuilder;
 import org.graphper.api.Subgraph;
 import org.graphper.api.Subgraph.SubgraphBuilder;
 import org.graphper.api.attributes.ArrowShape;
+import org.graphper.api.attributes.ClusterShape;
+import org.graphper.api.attributes.ClusterShapeEnum;
 import org.graphper.api.attributes.ClusterStyle;
 import org.graphper.api.attributes.Color;
 import org.graphper.api.attributes.Dir;
@@ -349,7 +351,7 @@ public class DotParser {
 
   private void setNodesAndEdges(Map<String, Node> nodeRecord,
                                 GraphContainerBuilder graphContainerBuilder, Graph g) {
-    for (com.alexmerz.graphviz.objects.Node node : g.getNodes(true)) {
+    for (com.alexmerz.graphviz.objects.Node node : g.getNodes(false)) {
       addNode(nodeRecord, graphContainerBuilder, node);
     }
 
@@ -377,15 +379,19 @@ public class DotParser {
     }
     String style =  attrFunc.apply("style");
     if (style != null) {
-      if (LineStyle.DOTTED.getName().equalsIgnoreCase(style)) {
-        builder.style(LineStyle.DOTTED);
-      } else if (LineStyle.DASHED.getName().equalsIgnoreCase(style)) {
-        builder.style(LineStyle.DASHED);
-      } else if (LineStyle.BOLD.getName().equalsIgnoreCase(style)) {
-        builder.style(LineStyle.BOLD);
-      } else if (LineStyle.INVIS.getName().equalsIgnoreCase(style)) {
-        builder.style(LineStyle.INVIS);
+      String[] styles = style.split(",");
+      LineStyle[] lineStyles = new LineStyle[styles.length];
+      for (int i = 0; i < styles.length; i++) {
+        LineStyle ls = null;
+        for (LineStyle value : LineStyle.values()) {
+          if (value.name().equalsIgnoreCase(styles[i])) {
+            ls = value;
+            break;
+          }
+        }
+        lineStyles[i] = ls;
       }
+      builder.style(lineStyles);
     }
 
     String tailPort = attrFunc.apply("tailport");
@@ -614,15 +620,19 @@ public class DotParser {
 
     String style = node.getAttribute("style");
     if (style != null) {
-      if (NodeStyle.DOTTED.getName().equalsIgnoreCase(style)) {
-        builder.style(NodeStyle.DOTTED);
-      } else if (NodeStyle.DASHED.getName().equalsIgnoreCase(style)) {
-        builder.style(NodeStyle.DASHED);
-      } else if (LineStyle.BOLD.getName().equalsIgnoreCase(style)) {
-        builder.style(NodeStyle.BOLD);
-      } else if (LineStyle.INVIS.getName().equalsIgnoreCase(style)) {
-        builder.style(NodeStyle.INVIS);
+      String[] styles = style.split(",");
+      NodeStyle[] nodeStyles = new NodeStyle[styles.length];
+      for (int i = 0; i < styles.length; i++) {
+        NodeStyle ns = null;
+        for (NodeStyle value : NodeStyle.values()) {
+          if (value.name().equalsIgnoreCase(styles[i])) {
+            ns = value;
+            break;
+          }
+        }
+        nodeStyles[i] = ns;
       }
+      builder.style(nodeStyles);
     }
 
     n = builder.build();
@@ -792,16 +802,25 @@ public class DotParser {
 
         String style = subgraph.getAttribute("style");
         if (style != null) {
-          if (ClusterStyle.DOTTED.getName().equalsIgnoreCase(style)) {
-            cluster.style(ClusterStyle.DOTTED);
-          } else if (NodeStyle.DASHED.getName().equalsIgnoreCase(style)) {
-            cluster.style(ClusterStyle.DASHED);
-          } else if (ClusterStyle.BOLD.getName().equalsIgnoreCase(style)) {
-            cluster.style(ClusterStyle.BOLD);
-          } else if (ClusterStyle.INVIS.getName().equalsIgnoreCase(style)) {
-            cluster.style(ClusterStyle.INVIS);
-          } else if (ClusterStyle.ROUNDED.getName().equalsIgnoreCase(style)) {
-            cluster.style(ClusterStyle.ROUNDED);
+          String[] styles = style.split(",");
+          ClusterStyle[] clusterStyles = new ClusterStyle[styles.length];
+          for (int i = 0; i < styles.length; i++) {
+            ClusterStyle cs = null;
+            for (ClusterStyle value : ClusterStyle.values()) {
+              if (value.name().equalsIgnoreCase(styles[i])) {
+                cs = value;
+                break;
+              }
+            }
+            clusterStyles[i] = cs;
+          }
+          cluster.style(clusterStyles);
+        }
+        String shape = subgraph.getAttribute("shape");
+        for (ClusterShapeEnum clusterShape : ClusterShapeEnum.values()) {
+          if (clusterShape.getName().equalsIgnoreCase(shape)) {
+            cluster.shape(clusterShape);
+            break;
           }
         }
 

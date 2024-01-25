@@ -1,0 +1,16 @@
+digraph G {
+
+subgraph cluster_1 {
+a;b;e;f
+}
+
+subgraph cluster_2 {
+d;c
+}
+
+a->b->c->f
+a->d->e->f
+b->e
+d->c
+
+}

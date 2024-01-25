@@ -1,6 +1,10 @@
 digraph G {
     templine[dir=back]
     C->BB
+    B->F
+    F->GG
+    F->SS
+    B->D
     subgraph cluster_A {
         label="Cluster A"
         A->C
@@ -19,4 +23,5 @@ digraph G {
         L->FF
         FF->SS
     }
+
 }
