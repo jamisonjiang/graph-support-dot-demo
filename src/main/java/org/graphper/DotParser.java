@@ -97,6 +97,8 @@ public class DotParser {
     COLOR_CACHE = Collections.unmodifiableMap(colorCache);
   }
 
+  private Graphviz graphviz;
+
   private GraphResource graphResource;
 
   private Map<String, String> tableMap = new HashMap<>();
@@ -107,6 +109,10 @@ public class DotParser {
 
   public GraphResource getGraphResource() {
     return graphResource;
+  }
+
+  public Graphviz getGraphviz() {
+    return graphviz;
   }
 
   public GraphResource toSvg(String dot)
@@ -138,7 +144,8 @@ public class DotParser {
       setSubgraph(nodeRecord, graphvizBuilder, g);
     }
 
-    return graphvizBuilder.build().toFile(FileType.PNG);
+    graphviz = graphvizBuilder.build();
+    return graphviz.toFile(FileType.PNG);
   }
 
   private StringBuffer preHandle(String dot) {
