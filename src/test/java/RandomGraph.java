@@ -41,8 +41,8 @@ public class RandomGraph {
 
     for (int i = 0; i < clusterNum; i++) {
       gv.addln(gv.start_subgraph(i));
-      gv.addln("style=[bold]");
-      gv.addln("label=\"cluster_" + i);
+      gv.addln("style=\"bold\"");
+      gv.addln("label=\"cluster_" + i + "\"");
       int clusterNodeNum = random.nextInt(clusterMaxNodeNum) + 1;
       for (int j = 0; j < clusterNodeNum; j++) {
         gv.addln(String.valueOf(random.nextInt(nodeNum)));
@@ -72,6 +72,9 @@ public class RandomGraph {
         randomGraph.generate().toFile(FileType.PNG).save(PathHelper.path, "test_" + i);
       } catch (Exception e) {
         System.err.println(e.getMessage() + "Occurred error and save error graph");
+        if (e instanceof ParseException) {
+          return;
+        }
         saveDot(PathHelper.errorPath, i, randomGraph);
       }
     }
