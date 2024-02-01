@@ -1,6 +1,5 @@
 import com.alexmerz.graphviz.ParseException;
 import graph.GraphViz;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +41,8 @@ public class RandomGraph {
 
     for (int i = 0; i < clusterNum; i++) {
       gv.addln(gv.start_subgraph(i));
+      gv.addln("style=[bold]");
+      gv.addln("label=\"cluster_" + i);
       int clusterNodeNum = random.nextInt(clusterMaxNodeNum) + 1;
       for (int j = 0; j < clusterNodeNum; j++) {
         gv.addln(String.valueOf(random.nextInt(nodeNum)));
@@ -64,15 +65,14 @@ public class RandomGraph {
   }
 
   public static void main(String[] args) throws IOException {
-    String path = "./src/test/result/";
+    System.setProperty("graph.quality.check", "true");
     for (int i = 0; i < 100; i++) {
       RandomGraph randomGraph = new RandomGraph(100, 80, 15, 12);
       try {
-        randomGraph.generate().toFile(FileType.PNG).save(path, "test_" + i);
-//        saveDot(path, i, randomGraph);
+        randomGraph.generate().toFile(FileType.PNG).save(PathHelper.path, "test_" + i);
       } catch (Exception e) {
         System.err.println(e.getMessage() + "Occurred error and save error graph");
-        saveDot(path, i, randomGraph);
+        saveDot(PathHelper.errorPath, i, randomGraph);
       }
     }
 
