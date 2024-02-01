@@ -1,14 +1,13 @@
 import com.alexmerz.graphviz.ParseException;
 import java.io.IOException;
 import org.graphper.DotParser;
-import org.graphper.api.GraphResource;
 import org.graphper.draw.ExecuteException;
 
 public class Test {
 
   public static void main(String[] args) throws ExecuteException, ParseException, IOException {
     String dot = "digraph G {\n"
-        + "splines=none\n"
+//        + "splines=none\n"
         + "subgraph cluster_0 {\n"
         + "98\n"
         + "79\n"
@@ -246,7 +245,7 @@ public class Test {
         + "84->45\n"
         + "}\n";
 
-//    System.setProperty("dot.coordinate.v1", "true");
+    System.setProperty("graph.quality.check", "true");
     DotParser dotParser = new DotParser(dot);
     dotParser.getGraphviz().toSvg().save("./", "test");
   }
