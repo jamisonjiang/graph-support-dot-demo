@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.graphper.DotParser;
 import org.graphper.api.FileType;
 import org.graphper.api.Graphviz;
@@ -20,13 +21,17 @@ public class RandomGraph {
 
   private int clusterMaxNodeNum;
 
+  private int clusterMaxNestDeep;
+
   private String graph;
 
-  public RandomGraph(int nodeNum, int lineNum, int clusterNum, int clusterMaxNodeNum) {
+  public RandomGraph(int nodeNum, int lineNum, int clusterNum, int clusterMaxNodeNum,
+                     int clusterMaxNestDeep) {
     this.nodeNum = nodeNum;
     this.lineNum = lineNum;
     this.clusterNum = clusterNum;
     this.clusterMaxNodeNum = clusterMaxNodeNum;
+    this.clusterMaxNestDeep = clusterMaxNestDeep;
   }
 
   public Graphviz generate() throws ExecuteException, ParseException, IOException {
@@ -34,21 +39,11 @@ public class RandomGraph {
     gv.addln(gv.start_graph());
 
     Random random = new Random();
-    List<String> nodes = new ArrayList<>();
-    for (int i = 0; i < nodeNum; i++) {
-      nodes.add(String.valueOf(random.nextInt(nodeNum * 10)));
-    }
 
-    for (int i = 0; i < clusterNum; i++) {
-      gv.addln(gv.start_subgraph(i));
-      gv.addln("style=\"bold\"");
-      gv.addln("label=\"cluster_" + i + "\"");
-      int clusterNodeNum = random.nextInt(clusterMaxNodeNum) + 1;
-      for (int j = 0; j < clusterNodeNum; j++) {
-        gv.addln(String.valueOf(random.nextInt(nodeNum)));
-      }
-      gv.addln(String.valueOf(nodeNum + i));
-      gv.addln(gv.end_graph());
+    AtomicInteger clusterNo = new AtomicInteger();
+    while (clusterNo.get() < clusterNum) {
+      clusterNo.incrementAndGet();
+      nestCluster(clusterNo, 0, gv, random);
     }
 
     for (int i = 0; i < lineNum; i++) {
@@ -64,10 +59,32 @@ public class RandomGraph {
     return dotParser.getGraphviz();
   }
 
+  private void nestCluster(AtomicInteger clusterNo, int deep, GraphViz gv, Random random) {
+    if (deep > clusterMaxNestDeep) {
+      return;
+    }
+
+    gv.addln(gv.start_subgraph(clusterNo.get()));
+    gv.addln("style=\"bold\"");
+    gv.addln("label=\"cluster_" + clusterNo.get() + "\"");
+    int clusterNodeNum = random.nextInt(clusterMaxNodeNum) + 1;
+    for (int j = 0; j < clusterNodeNum; j++) {
+      gv.addln(String.valueOf(random.nextInt(nodeNum)));
+    }
+
+    if (random.nextInt() % 2 == 0) {
+      clusterNo.incrementAndGet();
+      nestCluster(clusterNo, deep + 1, gv, random);
+    }
+
+    gv.addln(String.valueOf(nodeNum + clusterNodeNum));
+    gv.addln(gv.end_graph());
+  }
+
   public static void main(String[] args) throws IOException {
     System.setProperty("graph.quality.check", "true");
     for (int i = 0; i < 100; i++) {
-      RandomGraph randomGraph = new RandomGraph(100, 80, 15, 12);
+      RandomGraph randomGraph = new RandomGraph(150, 130, 30, 25, 6);
       try {
         randomGraph.generate().toFile(FileType.PNG).save(PathHelper.path, "test_" + i);
       } catch (Exception e) {
