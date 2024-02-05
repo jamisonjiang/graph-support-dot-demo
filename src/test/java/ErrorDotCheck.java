@@ -6,7 +6,7 @@ import org.graphper.draw.ExecuteException;
 
 public class ErrorDotCheck {
 
-  public static void main(String[] args) throws ExecuteException, ParseException, IOException {
+  public static void main(String[] args) throws IOException {
 
     List<String> errorDot = PathHelper.getErrorDots();
     if (errorDot == null) {
@@ -14,9 +14,18 @@ public class ErrorDotCheck {
     }
 
     System.setProperty("graph.quality.check", "true");
-    for (String dot : errorDot) {
-      DotParser dotParser = new DotParser(dot);
-      dotParser.getGraphviz().toSvg().save("./", "test");
+    for (int i = 0; i < errorDot.size(); i++) {
+      try {
+        DotParser dotParser = new DotParser(errorDot.get(i));
+        dotParser.getGraphviz().toSvg().save("./", "test");
+//        if (i == 0) {
+//          break;
+//        }
+      } catch (Exception e) {
+        System.out.println("Index " + i);
+        e.printStackTrace();
+        break;
+      }
     }
   }
 }

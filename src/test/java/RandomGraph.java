@@ -77,21 +77,23 @@ public class RandomGraph {
       nestCluster(clusterNo, deep + 1, gv, random);
     }
 
-    gv.addln(String.valueOf(nodeNum + clusterNodeNum));
+    gv.addln(String.valueOf((nodeNum + clusterNodeNum) * clusterNo.get()));
     gv.addln(gv.end_graph());
   }
 
   public static void main(String[] args) throws IOException {
     System.setProperty("graph.quality.check", "true");
     for (int i = 0; i < 100; i++) {
-      RandomGraph randomGraph = new RandomGraph(150, 130, 30, 25, 6);
+      System.out.println("Test Graph " + i);
+      RandomGraph randomGraph = new RandomGraph(250, 200, 50, 35, 15);
       try {
         randomGraph.generate().toFile(FileType.PNG).save(PathHelper.path, "test_" + i);
       } catch (Exception e) {
-        System.err.println(e.getMessage() + "Occurred error and save error graph");
         if (e instanceof ParseException) {
+          System.out.println("Occurrend parse dot error");
           return;
         }
+        System.err.println(e.getMessage() + "Occurred error and save error graph");
         saveDot(PathHelper.errorPath, i, randomGraph);
       }
     }
